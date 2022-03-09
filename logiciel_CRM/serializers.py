@@ -1,35 +1,53 @@
-from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
-from rest_framework.validators import UniqueValidator
-from django.contrib.auth.models import User as Auth_User
-from django.contrib.auth.password_validation import validate_password
+from rest_framework import serializers
+
+from .models import Customer, Contract, Event
 
 
+class CustomerListSerializer(ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['id', 'name', 'email']
 
-"""
-class RegisterSerializer(ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
+
+class CustomerDetailSerializer(ModelSerializer):
 
     class Meta:
-        model = Auth_User
-        fields = ('username', 'password', 'password2')
-        extra_kwargs = {'username': {'required': True}, 'password': {'required': True}}
-
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({'password': "Password fields didn't match."})
-        return attrs
-
-    def create(self, validated_data):
-        auth_user = Auth_User.objects.create(username=validated_data['username'])
-        auth_user.set_password(validated_data['password'])
-        auth_user.save()
-        user = User.objects.create(username=auth_user.username, password=auth_user.password, id=auth_user.id,
-                                   role=validated_data['role'])
-        user.save()
-        return auth_user
-"""
+        model = Customer
+        fields = ['id', 'name', 'surname', 'email', 'phone', 'mobile', 'company_name', 'date_created',
+                  'date_updated', 'sales_staff']
 
 
-# email = serializers.EmailField(required=True, validators=[UniqueValidator(queryset=Auth_User.objects.all())])
+class ContractListSerializer(ModelSerializer):
+    class Meta:
+        model = Contract
+        fields = ['id', 'customer', 'date_created', 'amount']
+
+
+class ContractDetailSerializer(ModelSerializer):
+    customer_surname = serializers.ReadOnlyField(source='customer.surname')
+    customer_email = serializers.ReadOnlyField(source='customer.email')
+
+    class Meta:
+        model = Contract
+        fields = ['id', 'customer_surname', 'customer_email', 'date_created', 'date_updated', 'amount', 'status',
+                  'payment_due', 'sales_staff']
+
+
+class EventListSerializer(ModelSerializer):
+    customer_surname = serializers.ReadOnlyField(source='customer.surname')
+    customer_email = serializers.ReadOnlyField(source='customer.email')
+
+    class Meta:
+        model = Event
+        fields = ['id', 'customer_surname', 'customer_email', 'event_date']
+
+
+class EventDetailSerializer(ModelSerializer):
+    customer_company_name = serializers.ReadOnlyField(source='customer.company_name')
+    event_status_description = serializers.ReadOnlyField(source='event.status_description')
+
+    class Meta:
+        model = Event
+        fields = ['id', 'customer_company_name', 'event_status_description', 'event_date',
+                  'date_created', 'date_updated', 'attendees', 'notes']
