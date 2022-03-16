@@ -7,13 +7,13 @@ from authentication.views import UserListView, UserRetrieveView
 from logiciel_CRM.views import CustomerViewSet, ContractViewSet, EventViewSet
 
 customer_router = routers.SimpleRouter()
-customer_router.register('customer', CustomerViewSet, basename='customer')
+customer_router.register('customers', CustomerViewSet, basename='customer')
 
 contract_router = routers.SimpleRouter()
-contract_router.register('contract', ContractViewSet, basename='contract')
+contract_router.register('contracts', ContractViewSet, basename='contract')
 
 event_router = routers.SimpleRouter()
-event_router.register('event', EventViewSet, basename='event')
+event_router.register('events', EventViewSet, basename='event')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

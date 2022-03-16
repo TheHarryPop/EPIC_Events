@@ -30,8 +30,8 @@ class ContractDetailSerializer(ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['id', 'customer_surname', 'customer_email', 'date_created', 'date_updated', 'amount', 'status',
-                  'payment_due', 'sales_staff']
+        fields = ['id', 'customer', 'customer_surname', 'customer_email', 'date_created', 'date_updated', 'amount',
+                  'status', 'payment_due', 'sales_staff']
 
 
 class EventListSerializer(ModelSerializer):
@@ -40,14 +40,13 @@ class EventListSerializer(ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['id', 'customer_surname', 'customer_email', 'event_date']
+        fields = ['id', 'customer', 'customer_surname', 'customer_email', 'event_date']
 
 
 class EventDetailSerializer(ModelSerializer):
     customer_company_name = serializers.ReadOnlyField(source='customer.company_name')
-    event_status_description = serializers.ReadOnlyField(source='event.status_description')
 
     class Meta:
         model = Event
-        fields = ['id', 'customer_company_name', 'event_status_description', 'event_date',
-                  'date_created', 'date_updated', 'attendees', 'notes']
+        fields = ['id', 'customer', 'customer_company_name', 'status', 'event_date',
+                  'date_created', 'date_updated', 'attendees', 'notes', 'support_staff']

@@ -4,14 +4,14 @@ from django.db import models
 
 class User(AbstractUser):
 
-    MANAGEMENT = 'MANAGEMENT'
-    SALES = 'SALES'
-    SUPPORT = 'SUPPORT'
+    Management = 'Management'
+    Sales = 'Sales'
+    Support = 'Support'
 
-    ROLE_CHOICES = (
-        (MANAGEMENT, 'Manager'),
-        (SALES, 'Seller'),
-        (SUPPORT, 'Support')
+    RoleChoices = (
+        (Management, 'Manager'),
+        (Sales, 'Seller'),
+        (Support, 'Support')
     )
 
-    role = models.CharField(max_length=64, choices=ROLE_CHOICES, null=False, verbose_name='role')
+    role = models.CharField(max_length=64, choices=RoleChoices, null=False, verbose_name='role')
