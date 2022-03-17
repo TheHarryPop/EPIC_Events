@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'EPIC_Events.urls'
+ROOT_URLCONF = 'EPIC_Events_app.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'EPIC_Events.wsgi.application'
+WSGI_APPLICATION = 'EPIC_Events_app.wsgi.application'
 
 
 # Database

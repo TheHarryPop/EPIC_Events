@@ -14,6 +14,9 @@ class Customer(models.Model):
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
 
+    def __str__(self):
+        return f"Client: {self.surname} | Company: {self.company_name}"
+
 
 class Contract(models.Model):
     sales_staff = models.ForeignKey(to=User, on_delete=models.CASCADE, null=False,

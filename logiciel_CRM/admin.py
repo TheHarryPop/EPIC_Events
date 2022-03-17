@@ -7,6 +7,7 @@ from .forms import CustomerCreationForm, ContractCreationForm, EventCreationForm
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
+
     # model = Customer
     # form = CustomerCreationForm
     list_display = ['sales_staff', 'name', 'surname', 'email', 'phone', 'mobile', 'company_name', 'date_created']
