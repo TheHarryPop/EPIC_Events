@@ -6,14 +6,14 @@ from .forms import CustomUserCreationForm
 
 
 class CustomUserAdmin(UserAdmin):
+
     model = User
     add_form = CustomUserCreationForm
-    list_display = ['username', 'email', 'role']
-    search_fields = ['username', 'email', 'role']
-
-    add_fieldsets = (*UserAdmin.add_fieldsets, (None, {'fields': ('role',)}))
+    list_display = ['username', 'email', 'role', 'is_staff']
 
     fieldsets = (*UserAdmin.fieldsets, ('User role', {'fields': ('role',)}))
+
+    add_fieldsets = (*UserAdmin.add_fieldsets, ('Staff', {'fields': ('role',)}))
 
 
 admin.site.register(User, CustomUserAdmin)

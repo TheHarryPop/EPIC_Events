@@ -14,7 +14,7 @@ class CustomerCreationForm(forms.ModelForm):
 
 class ContractCreationForm(forms.ModelForm):
     customer = forms.ModelChoiceField(queryset=Customer.objects.all())
-    sales_staff = forms.ModelChoiceField(queryset=User.objects.filter(role='SALES'))
+    sales_staff = forms.ModelChoiceField(queryset=User.objects.filter(role='Sales'))
 
     class Meta:
         model = Contract
@@ -27,5 +27,4 @@ class EventCreationForm(forms.ModelForm):
 
     class Meta:
         model = Event
-        # fields = ('customer', 'support_staff', 'status', 'event_date', 'attendees', 'notes')
-        fields = ('customer', 'support_staff', 'status', 'attendees', 'notes')
+        fields = ('customer', 'support_staff', 'status', 'event_date', 'attendees', 'notes')

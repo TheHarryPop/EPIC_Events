@@ -23,7 +23,7 @@ class Contract(models.Model):
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
     amount = models.FloatField()
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=False, verbose_name='sign')
     payment_due = models.DateField(null=True)
 
 
