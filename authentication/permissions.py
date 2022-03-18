@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from logiciel_CRM.models import Contract, Event
+from logiciel_CRM.models import Customer, Contract, Event
 
 
 class CustomersPermissions(BasePermission):
@@ -17,7 +17,7 @@ class CustomersPermissions(BasePermission):
                 return request.method in SAFE_METHODS
             return False
         elif request.user.role == "Sales":
-            if obj.sales_staff == request.user:
+            if obj.sales_staff.id == request.user.id:
                 return True
             return False
         elif request.user.role == "Management":
@@ -33,7 +33,7 @@ class ContractsPermissions(BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        if request.user == obj.sales_staff:
+        if request.user.id == obj.sales_staff.id:
             return True
         elif request.user.role == "Management":
             return True
@@ -48,7 +48,8 @@ class EventsPermissions(BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        if request.user == obj.support_staff or request.user == obj.sales_staff:
+        customer = Customer.objects.get(id=str(obj.customer.id))
+        if request.user.id == obj.support_staff.id or request.user.id == customer.sales_staff.id:
             return True
         elif request.user.role == "Management":
             return True

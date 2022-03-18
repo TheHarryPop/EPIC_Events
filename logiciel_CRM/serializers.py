@@ -45,8 +45,9 @@ class EventListSerializer(ModelSerializer):
 
 class EventDetailSerializer(ModelSerializer):
     customer_company_name = serializers.ReadOnlyField(source='customer.company_name')
+    customer_sales_staff = serializers.ReadOnlyField(source='customer.sales_staff.id')
 
     class Meta:
         model = Event
         fields = ['id', 'customer', 'customer_company_name', 'status', 'event_date',
-                  'date_created', 'date_updated', 'attendees', 'notes', 'support_staff', 'sales_staff']
+                  'date_created', 'date_updated', 'attendees', 'notes', 'support_staff', 'customer_sales_staff']
