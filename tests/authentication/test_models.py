@@ -5,17 +5,17 @@ import pytest
 
 class TestUsersModels:
     @pytest.mark.django_db
-    def test_profile_str(self):
+    def test_user_str(self):
         """
-        Testing whether Profile's __str__ method is implemented properly
+        Testing whether User's __str__ method is implemented properly
         """
         user = User.objects.create(username='TestUser', password='random_password')
         assert user.__str__() == f"User: {user.username} | Role: {user.role}"
 
     @pytest.mark.django_db
-    def test_create_customer(self):
+    def test_create_user(self):
         """
-        Testing how many Users registered in DB
+        Testing if we can register a user in DB
         """
         nbr_of_users_before_add = User.objects.count()
         new_user = User.objects.create(username='TestUser', password='random_password')
