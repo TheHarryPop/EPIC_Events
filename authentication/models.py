@@ -15,3 +15,6 @@ class User(AbstractUser):
     )
 
     role = models.CharField(max_length=64, choices=RoleChoices, null=False, verbose_name='role')
+
+    def __str__(self):
+        return f"User: {self.username} | Role: {self.role}"

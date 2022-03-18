@@ -12,3 +12,4 @@ class UserListView(ListAPIView):
 class UserRetrieveView(RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+

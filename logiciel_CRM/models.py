@@ -29,6 +29,9 @@ class Contract(models.Model):
     status = models.BooleanField(default=False, verbose_name='sign')
     payment_due = models.DateField(null=True)
 
+    def __str__(self):
+        return f"Client: {self.customer} | Sign: {self.status} | Sales Staff: {self.sales_staff}"
+
 
 class Event(models.Model):
     InProgress = 'IN PROGRESS'
@@ -48,3 +51,6 @@ class Event(models.Model):
     date_updated = models.DateField(auto_now=True)
     attendees = models.IntegerField()
     notes = models.CharField(max_length=2048)
+
+    def __str__(self):
+        return f"Client: {self.customer} | Status: {self.status} | Support Staff: {self.support_staff}"

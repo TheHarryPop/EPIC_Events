@@ -14,6 +14,16 @@ class CustomerAdmin(admin.ModelAdmin):
     list_filter = ['sales_staff', 'company_name']
     search_fields = ['name', 'surname']
 
+    def has_add_permission(self, request):
+        return True
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def has_view_permission(self, request, obj=None):
+        if request.user.is_staff:
+            return True
+
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):

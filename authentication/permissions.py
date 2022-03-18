@@ -48,7 +48,7 @@ class EventsPermissions(BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        if request.user == obj.support_staff:
+        if request.user == obj.support_staff or request.user == obj.sales_staff:
             return True
         elif request.user.role == "Management":
             return True

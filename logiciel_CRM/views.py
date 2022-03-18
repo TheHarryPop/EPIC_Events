@@ -2,11 +2,11 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from datetime import datetime
+from django_filters import rest_framework as filters
 
 from .models import Customer, Contract, Event
 from .serializers import CustomerListSerializer, CustomerDetailSerializer, ContractListSerializer, \
     ContractDetailSerializer, EventListSerializer, EventDetailSerializer
-from authentication.models import User
 from authentication.permissions import CustomersPermissions, ContractsPermissions, EventsPermissions
 
 
@@ -15,14 +15,17 @@ class CustomerViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, CustomersPermissions]
     serializer_class = CustomerListSerializer
     detail_serializer_class = CustomerDetailSerializer
-
-    def get_queryset(self):
-        return Customer.objects.all()
+    queryset = Customer.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ('surname', 'email')
 
     def create(self, request, *args, **kwargs):
         serializer = CustomerDetailSerializer(data=request.data)
+        request.data._mutable = True
+        request.data['sales_staff'] = request.user.id
+        request.data._mutable = False
         serializer.is_valid()
-        serializer.save(sales_staff=request.user.id)
+        serializer.save()
         return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
@@ -48,9 +51,9 @@ class ContractViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, ContractsPermissions]
     serializer_class = ContractListSerializer
     detail_serializer_class = ContractDetailSerializer
-
-    def get_queryset(self):
-        return Contract.objects.all()
+    queryset = Contract.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ('customer__surname', 'customer__email', 'date_created', 'amount')
 
     def create(self, request, *args, **kwargs):
         serializer = ContractDetailSerializer(data=request.data)
@@ -92,9 +95,9 @@ class EventViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, EventsPermissions]
     serializer_class = EventListSerializer
     detail_serializer_class = EventDetailSerializer
-
-    def get_queryset(self):
-        return Event.objects.all()
+    queryset = Event.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_fields = ('customer__surname', 'customer__email', 'event_date')
 
     def create(self, request, *args, **kwargs):
         serializer = EventDetailSerializer(data=request.data)
