@@ -12,6 +12,7 @@ from authentication.permissions import CustomersPermissions, ContractsPermission
 
 class CustomerViewSet(ModelViewSet):
 
+    lookup_view_s = 'customer'
     permission_classes = [IsAuthenticated, CustomersPermissions]
     serializer_class = CustomerListSerializer
     detail_serializer_class = CustomerDetailSerializer
