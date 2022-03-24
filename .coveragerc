@@ -1,2 +1,5 @@
 [run]
-omit = tests/*
+omit =
+ /tests/*
+ /authentication/migrations/*
+ /logiciel_CRM/migrations/*

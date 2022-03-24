@@ -22,7 +22,6 @@ class CustomersPermissions(BasePermission):
             return False
         elif request.user.role == "Management":
             return True
-        return False
 
 
 class ContractsPermissions(BasePermission):
@@ -43,8 +42,9 @@ class ContractsPermissions(BasePermission):
 class EventsPermissions(BasePermission):
 
     def has_permission(self, request, view):
-        if request.user.role == "Support":
-            return request.method in SAFE_METHODS
+        if request.method == 'POST':
+            if request.user.role == "Support":
+                return request.method in SAFE_METHODS
         return True
 
     def has_object_permission(self, request, view, obj):

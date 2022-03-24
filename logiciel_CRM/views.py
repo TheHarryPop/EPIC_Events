@@ -7,6 +7,7 @@ from django_filters import rest_framework as filters
 from .models import Customer, Contract, Event
 from .serializers import CustomerListSerializer, CustomerDetailSerializer, ContractListSerializer, \
     ContractDetailSerializer, EventListSerializer, EventDetailSerializer
+from authentication.models import User
 from authentication.permissions import CustomersPermissions, ContractsPermissions, EventsPermissions
 
 
@@ -31,14 +32,25 @@ class CustomerViewSet(ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = CustomerDetailSerializer(data=request.data)
+        data = request.data
         if instance.sales_staff == request.user or request.user.role == 'Management':
-            serializer.is_valid()
-            serializer.update(instance=instance, validated_data=request.data)
+
+            try:
+                sales_staff = User.objects.get(id=data['sales_staff'])
+                instance.sales_staff = sales_staff
+            except KeyError:
+                pass
+
+            instance.name = data.get('name', instance.name)
+            instance.surname = data.get('surname', instance.surname)
+            instance.email = data.get('email', instance.email)
+            instance.phone = data.get('phone', instance.phone)
+            instance.mobile = data.get('mobile', instance.mobile)
+            instance.company_name = data.get('company_name', instance.company_name)
+
+            serializer = CustomerDetailSerializer(instance)
+            instance.save()
             return Response(serializer.data)
-        else:
-            message = 'You are not in charge of this customer'
-            return Response(message)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -72,15 +84,31 @@ class ContractViewSet(ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = ContractDetailSerializer(data=request.data)
-        if instance.customer.sales_staff == request.user or request.user.role == 'Management':
-            if request.data['status'] == 'True':
-                request.data._mutable = True
-                request.data['payment_due'] = datetime.now().strftime("%Y-%m-%d")
-                request.data._mutable = False
-            serializer.is_valid()
-            serializer.update(instance=instance, validated_data=request.data)
+        data = request.data
+        if instance.sales_staff == request.user or request.user.role == 'Management':
+            try:
+                customer = Customer.objects.get(id=data['customer'])
+                instance.customer = customer
+            except KeyError:
+                pass
+
+            try:
+                sales_staff = User.objects.get(id=data['sales_staff'])
+                instance.sales_staff = sales_staff
+            except KeyError:
+                pass
+
+            instance.amount = data.get('amount', instance.amount)
+            instance.status = data.get('status', instance.status)
+            if data['status'] == 'True':
+                data._mutable = True
+                data['payment_due'] = datetime.now().strftime("%Y-%m-%d")
+                data._mutable = False
+
+            serializer = ContractDetailSerializer(instance)
+            instance.save()
             return Response(serializer.data)
+
         else:
             message = 'You are not in charge of this customer'
             return Response(message)
@@ -116,13 +144,26 @@ class EventViewSet(ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = EventDetailSerializer(data=request.data)
-        if instance.customer.support_staff == request.user or request.user.role == 'Management':
-            serializer.is_valid()
-            if 'event_date' in serializer.errors:
-                message = 'respect the format : YYYY-MM-DD hh:mm'
-                return Response(message)
-            serializer.update(instance=instance, validated_data=request.data)
+        data = request.data
+
+        if instance.support_staff == request.user or request.user.role == 'Management':
+            try:
+                customer = Customer.objects.get(id=data['customer'])
+                instance.customer = customer
+            except KeyError:
+                pass
+
+            try:
+                support_staff = User.objects.get(id=data['support_staff'])
+                instance.support_staff = support_staff
+            except KeyError:
+                pass
+
+            instance.status = data.get('status', instance.status)
+            instance.attendees = data.get('attendees', instance.attendees)
+            instance.notes = data.get('notes', instance.notes)
+            serializer = EventDetailSerializer(instance)
+            instance.save()
             return Response(serializer.data)
         else:
             message = "You can't modify this event"

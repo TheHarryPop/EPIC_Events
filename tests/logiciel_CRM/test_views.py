@@ -78,6 +78,20 @@ class TestCustomerView:
         assert 'You do not have permission' in response_details.data['detail']
 
     @pytest.mark.django_db
+    def test_retrieve_customer_details_manager(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        customer = Customer.objects.create(sales_staff=seller, name="Jean", surname="Michel",
+                                           email="jean.mi@event.com", phone="0231659845", mobile="0606060606",
+                                           company_name="event")
+        manager = User.objects.create_user(username='manager', password='1234azert', role='Management')
+        response_login = client.post(reverse('login'), data={'username': 'manager', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_details = client.get(reverse('customer-detail', args=[customer.id]),
+                                      HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_details.status_code == 200
+        assert response_details.data['email'] == customer.email
+
+    @pytest.mark.django_db
     def test_create_customer_with_seller(self, client):
         seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
         response_login = client.post(reverse('login'), data={'username': 'seller', 'password': '1234azert'})
@@ -187,6 +201,21 @@ class TestContractView:
         assert 'You are not in charge' in response_create_contract.data
 
     @pytest.mark.django_db
+    def test_retrieve_contract_details_manager(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        customer = Customer.objects.create(sales_staff=seller, name="Jean", surname="Michel",
+                                           email="jean.mi@event.com", phone="0231659845", mobile="0606060606",
+                                           company_name="event")
+        contract = Contract.objects.create(sales_staff=seller, customer=customer, amount=1500)
+        manager = User.objects.create_user(username='manager', password='1234azert', role='Management')
+        response_login = client.post(reverse('login'), data={'username': 'manager', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_details = client.get(reverse('contract-detail', args=[contract.id]),
+                                      HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_details.status_code == 200
+        assert response_details.data['customer_surname'] == customer.surname
+
+    @pytest.mark.django_db
     def test_create_contract_with_support(self, client):
         user = User.objects.create_user(username='seller', password='1234azert', role='Sales')
         User.objects.create_user(username='support', password='1234azert', role='Support')
@@ -267,7 +296,7 @@ class TestEventView:
         assert response_details.data['customer_company_name'] == customer.company_name
 
     @pytest.mark.django_db
-    def test_retrieve_contract_details_unauthorized_support(self, client):
+    def test_retrieve_event_details_unauthorized_support(self, client):
         seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
         support = User.objects.create_user(username='support', password='1234azert', role='Support')
         support2 = User.objects.create_user(username='support2', password='1234azert', role='Support')
@@ -282,6 +311,23 @@ class TestEventView:
                                       HTTP_AUTHORIZATION=f'Bearer {token}')
         assert response_details.status_code == 403
         assert 'You do not have permission' in response_details.data['detail']
+
+    @pytest.mark.django_db
+    def test_retrieve_event_details_manager(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        support = User.objects.create_user(username='support', password='1234azert', role='Support')
+        customer = Customer.objects.create(sales_staff=seller, name="Jean", surname="Michel",
+                                           email="jean.mi@event.com", phone="0231659845", mobile="0606060606",
+                                           company_name="event")
+        event = Event.objects.create(customer=customer, support_staff=support, event_date='2022-05-11 22:00',
+                                     attendees=1, notes="RAS")
+        manager = User.objects.create_user(username='manager', password='1234azert', role='Management')
+        response_login = client.post(reverse('login'), data={'username': 'manager', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_details = client.get(reverse('event-detail', args=[event.id]),
+                                      HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_details.status_code == 200
+        assert response_details.data['customer_company_name'] == customer.company_name
 
     @pytest.mark.django_db
     def test_create_event_authorized_seller(self, client):
