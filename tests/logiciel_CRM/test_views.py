@@ -115,6 +115,31 @@ class TestCustomerView:
         assert response_create_customer.status_code == 403
         assert 'You do not have permission' in response_create_customer.data['detail']
 
+    @pytest.mark.django_db
+    def test_delete_customer_authorized_seller(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        customer = Customer.objects.create(sales_staff=seller, name="Jean", surname="Michel",
+                                           email="jean.mi@event.com", phone="0231659845", mobile="0606060606",
+                                           company_name="event")
+        response_login = client.post(reverse('login'), data={'username': 'seller', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_delete_customer = client.delete(reverse('customer-detail', args=[customer.id]),
+                                                 HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_delete_customer.status_code == 204
+
+    @pytest.mark.django_db
+    def test_delete_customer_unauthorized_seller(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        seller2 = User.objects.create_user(username='seller2', password='1234azert', role='Sales')
+        customer = Customer.objects.create(sales_staff=seller2, name="Jean", surname="Michel",
+                                           email="jean.mi@event.com", phone="0231659845", mobile="0606060606",
+                                           company_name="event")
+        response_login = client.post(reverse('login'), data={'username': 'seller', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_delete_customer = client.delete(reverse('customer-detail', args=[customer.id]),
+                                                 HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_delete_customer.status_code == 403
+
 
 class TestContractView:
     @pytest.mark.django_db
@@ -217,16 +242,42 @@ class TestContractView:
 
     @pytest.mark.django_db
     def test_create_contract_with_support(self, client):
-        user = User.objects.create_user(username='seller', password='1234azert', role='Sales')
-        User.objects.create_user(username='support', password='1234azert', role='Support')
-        customer = Customer.objects.create(sales_staff=user, name="Jean", surname="Michel", email="jean.mi@event.com"
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        support = User.objects.create_user(username='support', password='1234azert', role='Support')
+        customer = Customer.objects.create(sales_staff=seller, name="Jean", surname="Michel", email="jean.mi@event.com"
                                            , phone="0231659845", mobile="0606060606", company_name="event")
         response_login = client.post(reverse('login'), data={'username': 'support', 'password': '1234azert'})
         token = response_login.data['access']
         response_create_contract = client.post(reverse('contract-list'), HTTP_AUTHORIZATION=f'Bearer {token}',
-                                               data={'sales_staff': user.id, 'customer': customer.id, 'amount': 1500})
+                                               data={'sales_staff': seller.id, 'customer': customer.id, 'amount': 1500})
         assert response_create_contract.status_code == 403
         assert 'You do not have permission' in response_create_contract.data['detail']
+
+    @pytest.mark.django_db
+    def test_delete_contract_authorized_seller(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        customer = Customer.objects.create(sales_staff=seller, name="Jean", surname="Michel", email="jean.mi@event.com"
+                                           , phone="0231659845", mobile="0606060606", company_name="event")
+        contract = Contract.objects.create(sales_staff=seller, customer=customer, amount=1500)
+        response_login = client.post(reverse('login'), data={'username': 'seller', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_create_contract = client.delete(reverse('contract-detail', args=[contract.id]),
+                                                 HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_create_contract.status_code == 204
+
+    @pytest.mark.django_db
+    def test_delete_contract_unauthorized_seller(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        seller2 = User.objects.create_user(username='seller2', password='1234azert', role='Sales')
+        customer = Customer.objects.create(sales_staff=seller2, name="Jean", surname="Michel",
+                                           email="jean.mi@event.com"
+                                           , phone="0231659845", mobile="0606060606", company_name="event")
+        contract = Contract.objects.create(sales_staff=seller2, customer=customer, amount=1500)
+        response_login = client.post(reverse('login'), data={'username': 'seller', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_delete_contract = client.delete(reverse('contract-detail', args=[contract.id]),
+                                                 HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_delete_contract.status_code == 403
 
 
 class TestEventView:
@@ -372,3 +423,33 @@ class TestEventView:
                                                   "event_date": '2022-05-11 22:00', "attendees": "1", "notes": "RAS"})
         assert response_create_event.status_code == 403
         assert 'You do not have permission' in response_create_event.data['detail']
+
+    @pytest.mark.django_db
+    def test_delete_event_authorized_seller(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        support = User.objects.create_user(username='support', password='1234azert', role='Support')
+        customer = Customer.objects.create(sales_staff=seller, name="Jean", surname="Michel", email="jean.mi@event.com"
+                                           , phone="0231659845", mobile="0606060606", company_name="event")
+        event = Event.objects.create(customer=customer, support_staff=support, event_date='2022-05-11 22:00',
+                                     attendees=1, notes="RAS")
+        response_login = client.post(reverse('login'), data={'username': 'seller', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_create_event = client.delete(reverse('event-detail', args=[event.id]),
+                                              HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_create_event.status_code == 204
+
+    @pytest.mark.django_db
+    def test_delete_event_unauthorized_seller(self, client):
+        seller = User.objects.create_user(username='seller', password='1234azert', role='Sales')
+        seller2 = User.objects.create_user(username='seller2', password='1234azert', role='Sales')
+        support = User.objects.create_user(username='support', password='1234azert', role='Support')
+        customer = Customer.objects.create(sales_staff=seller2, name="Jean", surname="Michel",
+                                           email="jean.mi@event.com"
+                                           , phone="0231659845", mobile="0606060606", company_name="event")
+        event = Event.objects.create(customer=customer, support_staff=support, event_date='2022-05-11 22:00',
+                                     attendees=1, notes="RAS")
+        response_login = client.post(reverse('login'), data={'username': 'seller', 'password': '1234azert'})
+        token = response_login.data['access']
+        response_delete_event = client.delete(reverse('event-detail', args=[event.id]),
+                                              HTTP_AUTHORIZATION=f'Bearer {token}')
+        assert response_delete_event.status_code == 403

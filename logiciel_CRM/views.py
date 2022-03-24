@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from datetime import datetime
 from django_filters import rest_framework as filters
@@ -51,6 +52,11 @@ class CustomerViewSet(ModelViewSet):
             serializer = CustomerDetailSerializer(instance)
             instance.save()
             return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -107,6 +113,11 @@ class ContractViewSet(ModelViewSet):
         instance.save()
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return self.detail_serializer_class
@@ -153,6 +164,11 @@ class EventViewSet(ModelViewSet):
         serializer = EventDetailSerializer(instance)
         instance.save()
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
