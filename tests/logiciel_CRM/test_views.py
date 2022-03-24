@@ -197,8 +197,8 @@ class TestContractView:
         response_create_contract = client.post(reverse('contract-list'), HTTP_AUTHORIZATION=f'Bearer {token}',
                                                data={'sales_staff': seller2.id, 'customer': customer.id,
                                                      'amount': 1500})
-        assert response_create_contract.status_code == 200
-        assert 'You are not in charge' in response_create_contract.data
+        assert response_create_contract.status_code == 403
+        assert 'You do not have permission' in response_create_contract.data['detail']
 
     @pytest.mark.django_db
     def test_retrieve_contract_details_manager(self, client):
@@ -356,8 +356,8 @@ class TestEventView:
         response_create_event = client.post(reverse('event-list'), HTTP_AUTHORIZATION=f'Bearer {token}',
                                             data={"customer": customer.id, "support_staff": support.id,
                                                   "event_date": '2022-05-11 22:00', "attendees": "1", "notes": "RAS"})
-        assert response_create_event.status_code == 200
-        assert 'You are not in charge' in response_create_event.data
+        assert response_create_event.status_code == 403
+        assert 'You do not have permission' in response_create_event.data['detail']
 
     @pytest.mark.django_db
     def test_create_event_with_support(self, client):

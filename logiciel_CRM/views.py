@@ -70,48 +70,42 @@ class ContractViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = ContractDetailSerializer(data=request.data)
-        customer = Customer.objects.get(id=int(request.data['customer']))
-        if customer.sales_staff == request.user:
-            request.data._mutable = True
-            request.data['sales_staff'] = request.user.id
-            request.data._mutable = False
-            serializer.is_valid()
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            message = 'You are not in charge of this customer'
-            return Response(message)
+        request.data._mutable = True
+        request.data['sales_staff'] = request.user.id
+        request.data._mutable = False
+        serializer.is_valid()
+        serializer.save()
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         data = request.data
-        if instance.sales_staff == request.user or request.user.role == 'Management':
-            try:
-                customer = Customer.objects.get(id=data['customer'])
-                instance.customer = customer
-            except KeyError:
-                pass
 
-            try:
-                sales_staff = User.objects.get(id=data['sales_staff'])
-                instance.sales_staff = sales_staff
-            except KeyError:
-                pass
+        try:
+            customer = Customer.objects.get(id=data['customer'])
+            instance.customer = customer
+        except KeyError:
+            pass
 
-            instance.amount = data.get('amount', instance.amount)
-            instance.status = data.get('status', instance.status)
+        try:
+            sales_staff = User.objects.get(id=data['sales_staff'])
+            instance.sales_staff = sales_staff
+        except KeyError:
+            pass
+
+        instance.amount = data.get('amount', instance.amount)
+        instance.status = data.get('status', instance.status)
+        try:
             if data['status'] == 'True':
                 data._mutable = True
-                data['payment_due'] = datetime.now().strftime("%Y-%m-%d")
+                instance.payment_due = datetime.now().strftime("%Y-%m-%d")
                 data._mutable = False
+        except:
+            pass
 
-            serializer = ContractDetailSerializer(instance)
-            instance.save()
-            return Response(serializer.data)
-
-        else:
-            message = 'You are not in charge of this customer'
-            return Response(message)
+        serializer = ContractDetailSerializer(instance)
+        instance.save()
+        return Response(serializer.data)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -130,44 +124,35 @@ class EventViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = EventDetailSerializer(data=request.data)
-        customer = Customer.objects.get(id=int(request.data['customer']))
-        if customer.sales_staff == request.user:
-            serializer.is_valid()
-            if 'event_date' in serializer.errors:
-                message = 'respect the format : YYYY-MM-DD hh:mm'
-                return Response(message)
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            message = 'You are not in charge of this customer'
+        serializer.is_valid()
+        if 'event_date' in serializer.errors:
+            message = 'respect the format : YYYY-MM-DD hh:mm'
             return Response(message)
+        serializer.save()
+        return Response(serializer.data)
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         data = request.data
 
-        if instance.support_staff == request.user or request.user.role == 'Management':
-            try:
-                customer = Customer.objects.get(id=data['customer'])
-                instance.customer = customer
-            except KeyError:
-                pass
+        try:
+            customer = Customer.objects.get(id=data['customer'])
+            instance.customer = customer
+        except KeyError:
+            pass
 
-            try:
-                support_staff = User.objects.get(id=data['support_staff'])
-                instance.support_staff = support_staff
-            except KeyError:
-                pass
+        try:
+            support_staff = User.objects.get(id=data['support_staff'])
+            instance.support_staff = support_staff
+        except KeyError:
+            pass
 
-            instance.status = data.get('status', instance.status)
-            instance.attendees = data.get('attendees', instance.attendees)
-            instance.notes = data.get('notes', instance.notes)
-            serializer = EventDetailSerializer(instance)
-            instance.save()
-            return Response(serializer.data)
-        else:
-            message = "You can't modify this event"
-            return Response(message)
+        instance.status = data.get('status', instance.status)
+        instance.attendees = data.get('attendees', instance.attendees)
+        instance.notes = data.get('notes', instance.notes)
+        serializer = EventDetailSerializer(instance)
+        instance.save()
+        return Response(serializer.data)
 
     def get_serializer_class(self):
         if self.action == 'retrieve':

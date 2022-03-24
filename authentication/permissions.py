@@ -27,6 +27,10 @@ class CustomersPermissions(BasePermission):
 class ContractsPermissions(BasePermission):
 
     def has_permission(self, request, view):
+        if request.method == 'POST':
+            customer = Customer.objects.get(id=int(request.data['customer']))
+            if customer.sales_staff != request.user:
+                return False
         if request.user.role == "Support":
             return request.method in SAFE_METHODS
         return True
@@ -43,8 +47,11 @@ class EventsPermissions(BasePermission):
 
     def has_permission(self, request, view):
         if request.method == 'POST':
+            customer = Customer.objects.get(id=int(request.data['customer']))
             if request.user.role == "Support":
                 return request.method in SAFE_METHODS
+            if customer.sales_staff != request.user:
+                return False
         return True
 
     def has_object_permission(self, request, view, obj):
