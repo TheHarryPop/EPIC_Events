@@ -18,7 +18,7 @@ class ContractCreationForm(forms.ModelForm):
 
     class Meta:
         model = Contract
-        fields = ('customer', 'sales_staff', 'amount', 'status', 'payment_due')
+        fields = ('customer', 'sales_staff', 'amount', 'status')
 
 
 class EventCreationForm(forms.ModelForm):

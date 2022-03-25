@@ -7,28 +7,19 @@ from .forms import CustomerCreationForm, ContractCreationForm, EventCreationForm
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    model = Customer
+    form = CustomerCreationForm
 
-    # model = Customer
-    # form = CustomerCreationForm
     list_display = ['sales_staff', 'name', 'surname', 'email', 'phone', 'mobile', 'company_name', 'date_created']
     list_filter = ['sales_staff', 'company_name']
     search_fields = ['name', 'surname']
 
-    def has_add_permission(self, request):
-        return True
-
-    def has_change_permission(self, request, obj=None):
-        return True
-
-    def has_view_permission(self, request, obj=None):
-        if request.user.is_staff:
-            return True
-
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
-    # model = Contract
-    # form = ContractCreationForm
+    model = Contract
+    form = ContractCreationForm
+
     list_display = ['customer', 'sales_staff', 'amount', 'status', 'payment_due']
     list_filter = ['customer', 'sales_staff', 'amount', 'status', 'payment_due']
     search_fields = ['customer']
@@ -36,8 +27,9 @@ class ContractAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    # model = Event
-    # form = EventCreationForm
+    model = Event
+    form = EventCreationForm
+
     list_display = ['customer', 'support_staff', 'status', 'event_date', 'attendees', 'notes']
     list_filter = ['customer', 'support_staff', 'status', 'event_date']
     search_fields = ['customer']
