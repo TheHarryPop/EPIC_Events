@@ -93,3 +93,7 @@ https://documenter.getpostman.com/view/19052717/UVsTqNBU
 	- Se connecter avec le profil superuser créé précédemment.
 	- Créer un nouvel utilisateur ayant pour rôle "Manager"
 	- Ce nouveau profil manager sera ensuite en mesure de se connecter à la partie administration pour créer de nouveaux utilisateurs "seller" ou "support" qui pourront travailler sur les endpoints.
+
+## Tests
+	
+	Mesure de couverture du code par les tests (coverage) : 82%
