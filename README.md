@@ -17,30 +17,30 @@ $ python manage.py runserver
 
 Ci dessous une liste des endpoints disponibles. La documentation Postman les présente en détail.
 
-http://127.0.0.1:8000/api/login/
-http://127.0.0.1:8000/api/customers/
-http://127.0.0.1:8000/api/customers/{{customer_id}}/
-http://127.0.0.1:8000/api/contracts/
-http://127.0.0.1:8000/api/contracts/{{contract_id}}/
-http://127.0.0.1:8000/api/events/
-http://127.0.0.1:8000/api/events/{{event_id}}/
+- http://127.0.0.1:8000/api/login/
+- http://127.0.0.1:8000/api/customers/
+- http://127.0.0.1:8000/api/customers/{{customer_id}}/
+- http://127.0.0.1:8000/api/contracts/
+- http://127.0.0.1:8000/api/contracts/{{contract_id}}/
+- http://127.0.0.1:8000/api/events/
+- http://127.0.0.1:8000/api/events/{{event_id}}/
 
 ## Filtres de recherche
 
 Ci dessous la liste des filtres disponibles pour chaque URL.
 
-Customers :
-	http://127.0.0.1:8000/api/customers/ : 'surname', 'email'
+- Customers :
+	- http://127.0.0.1:8000/api/customers/ : 'surname', 'email'
 
-Contracts :
-	http://127.0.0.1:8000/api/contracts/ : 'customer__surname', 'customer__email', 'date_created', 'amount'
+- Contracts :
+	- http://127.0.0.1:8000/api/contracts/ : 'customer__surname', 'customer__email', 'date_created', 'amount'
 
-Events :
-	http://127.0.0.1:8000/api/events/ : 'customer__surname', 'customer__email', 'event_date'
+- Events :
+	- http://127.0.0.1:8000/api/events/ : 'customer__surname', 'customer__email', 'event_date'
 
 ## Documentation
 
-La documentation Postman est disponible à cette adresse :
+- La documentation Postman est disponible à cette adresse :
 
 https://documenter.getpostman.com/view/19052717/UVsTqNBU
 
@@ -96,4 +96,4 @@ https://documenter.getpostman.com/view/19052717/UVsTqNBU
 
 ## Tests
 	
-Mesure de couverture du code par les tests (coverage) : 82%
+- Mesure de couverture du code par les tests (coverage) : 82%
