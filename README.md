@@ -77,13 +77,13 @@ https://documenter.getpostman.com/view/19052717/UVsTqNBU
 
 ## Création des profils utilisateurs
 	
-	Dans le terminal, créer un profil administrateur :
+- Dans le terminal, créer un profil administrateur :
 
 	```bash
 	$ py manage.py createsuperuser
 	```
 	
-	Puis lancer le serveur en local avec :
+- Puis lancer le serveur en local avec :
 	
 	```bash
 	$ py manage.py runserver
@@ -96,4 +96,4 @@ https://documenter.getpostman.com/view/19052717/UVsTqNBU
 
 ## Tests
 	
-	Mesure de couverture du code par les tests (coverage) : 82%
+Mesure de couverture du code par les tests (coverage) : 82%
